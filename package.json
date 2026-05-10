@@ -1,0 +1,19 @@
+{
+  "name": "trivia-bot",
+  "type": "module",
+  "scripts": {
+    "start": "node src/core/client.js",
+    "deploy": "node scripts/deploy.js",
+    "seed": "node scripts/seed.js",
+    "wipe": "node scripts/wipe-db.js"
+  },
+  "dependencies": {
+    "@discordjs/rest": "^2.6.1",
+    "better-sqlite3": "*",
+    "discord-api-types": "^0.38.47",
+    "discord.js": "^14",
+    "dotenv": "*",
+    "node-cron": "*",
+    "node-fetch": "^3"
+  }
+}

@@ -1,0 +1,16 @@
+export const categories = [
+  { id: 9, name: 'General Knowledge', emoji: '🧠', description: 'Broad knowledge questions' },
+  { id: 17, name: 'Science', emoji: '🔬', description: 'Science and nature' },
+  { id: 23, name: 'History', emoji: '📜', description: 'Historical events and figures' },
+  { id: 22, name: 'Geography', emoji: '🌍', description: 'World geography' },
+  { id: 21, name: 'Sports', emoji: '⚽', description: 'Sports and athletes' },
+  { id: 12, name: 'Music', emoji: '🎵', description: 'Music and artists' },
+  { id: 11, name: 'Movies', emoji: '🎬', description: 'Movies and cinema' },
+  { id: 18, name: 'Technology', emoji: '💻', description: 'Technology and gadgets' },
+  { id: 10, name: 'Art & Literature', emoji: '🎨', description: 'Art and literature' },
+  { id: 27, name: 'Animals', emoji: '🐾', description: 'Animals and wildlife' },
+  { id: 19, name: 'Mathematics', emoji: '➗', description: 'Math problems' },
+  { id: 20, name: 'Mythology', emoji: '🏛️', description: 'Myths and legends' },
+  { id: 24, name: 'Politics', emoji: '🏛️', description: 'Politics and government' },
+  { id: 28, name: 'Vehicles', emoji: '🚗', description: 'Vehicles and transportation' },
+]
