@@ -1,252 +1,287 @@
 <p align="center">
-  <img src="mr__obvious.png" alt="Mr. Obvious Trivia Bot Banner" width="100%" />
-</p>
-
-<h1 align="center">🎓 Mr. Obvious — Discord Trivia Bot</h1>
-
-<p align="center">
-  A feature-rich Discord trivia bot built with <strong>Node.js</strong>, <strong>discord.js v14</strong>, and <strong>SQLite</strong> via <code>better-sqlite3</code>.
+  <img src="mr__obvious.png" alt="Mr. Obvious — Discord Trivia Bot" width="100%" />
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/discord.js-v14-5865F2?logo=discord&logoColor=white" alt="discord.js" />
-  <img src="https://img.shields.io/badge/SQLite-better--sqlite3-003B57?logo=sqlite&logoColor=white" alt="SQLite" />
-  <img src="https://img.shields.io/badge/license-MIT-yellow" alt="MIT License" />
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js 18+" /></a>
+  <a href="https://discord.js.org"><img src="https://img.shields.io/badge/discord.js-v14-5865F2?style=flat-square&logo=discord&logoColor=white" alt="discord.js v14" /></a>
+  <a href="https://www.sqlite.org"><img src="https://img.shields.io/badge/SQLite-better--sqlite3-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-f0c040?style=flat-square" alt="MIT License" /></a>
+</p>
+
+<p align="center">
+  A self-hosted Discord trivia bot with solo games, duels, tournaments, leaderboards, achievements, daily challenges, and a full admin toolset — powered by <strong>discord.js v14</strong> slash commands and a local <strong>SQLite</strong> database.
 </p>
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Features](#-features)
-- [Project Structure](#-project-structure)
-- [Database Schema](#️-database-schema)
-- [Commands](#-commands)
-- [Setup & Installation](#-setup--installation)
-- [Environment Variables](#-environment-variables)
-- [Scripts](#️-scripts)
-- [License](#-license)
-
----
-
-## ✨ Features
-
-| Feature | Description |
-|---|---|
-| 🎮 **Solo Play** | Start a trivia game with custom category, difficulty, and time limit |
-| ⚔️ **Duels** | Challenge another user to a head-to-head trivia match |
-| 🏆 **Tournaments** | Multi-player tournament bracket support |
-| 📊 **Leaderboard** | Server-wide rankings by score |
-| 🎖️ **Achievements** | Unlock badges and milestones as you play |
-| 📅 **Daily Challenges** | One unique challenge per day with streak tracking |
-| 👤 **Player Profiles** | View your stats, level, XP, and streaks |
-| 🛡️ **Admin Panel** | Ban/unban players, reset stats, add/remove custom questions, send announcements |
-| 🗃️ **Custom Questions** | Per-server custom question pools managed via slash commands |
-| 📈 **Game History** | Full history of every game played, stored in SQLite |
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
+- [Configuration](#configuration)
+- [Slash Commands](#slash-commands)
+- [Database Schema](#database-schema)
+- [Scripts](#scripts)
+- [Bot Permissions](#bot-permissions)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## 📁 Project Structure
+## Features
+
+| | Feature | Description |
+|---|---|---|
+| 🎮 | **Solo Play** | Answer questions across categories with configurable difficulty and time limit |
+| ⚔️ | **Duels** | Head-to-head multi-round matches against another server member |
+| 🏆 | **Tournaments** | Bracket-style competitions open to multiple players |
+| 📊 | **Leaderboard** | Server-wide score rankings updated in real time |
+| 🎖️ | **Achievements** | Milestone badges unlocked automatically based on play history |
+| 📅 | **Daily Challenges** | One challenge per day with persistent streak tracking |
+| 👤 | **Player Profiles** | Per-user stats: score, XP, level, streaks, accuracy |
+| 🗃️ | **Custom Questions** | Admins can add, list, and remove guild-specific questions |
+| 🛡️ | **Admin Panel** | Ban/unban players, reset stats, and send announcements |
+| 📈 | **Game History** | Every session logged to SQLite for stats and replay analysis |
+
+---
+
+## Quick Start
+
+> **Prerequisites:** Node.js 18+, a Discord application with bot token ([create one here](https://discord.com/developers/applications))
+
+```bash
+# 1. Clone and install
+git clone https://github.com/your-username/mr-obvious-bot.git
+cd mr-obvious-bot
+npm install
+
+# 2. Configure
+cp .env.example .env
+#    → fill in DISCORD_TOKEN, CLIENT_ID, GUILD_ID
+
+# 3. (Optional) Seed starter questions
+npm run seed
+
+# 4. Register slash commands
+npm run deploy
+
+# 5. Start
+npm start
+```
+
+The SQLite database at `data/trivia.db` is created and migrated automatically on first run.
+
+---
+
+## Project Structure
 
 ```
-trivia/
+mr-obvious-bot/
 ├── data/
-│   ├── trivia.db              # SQLite database (auto-created)
-│   └── custom-questions.json  # Seed data for questions
+│   ├── trivia.db               # SQLite database — auto-created on startup
+│   └── custom-questions.json   # Starter question seed data
+│
 ├── scripts/
-│   ├── deploy.js              # Register slash commands with Discord
-│   ├── seed.js                # Seed the database with questions
-│   └── wipe-db.js             # Wipe the database (dev/reset)
+│   ├── deploy.js               # Registers slash commands via Discord REST API
+│   ├── seed.js                 # Seeds the database with starter questions
+│   └── wipe-db.js              # Drops all tables (destructive — dev use only)
+│
 ├── src/
-│   ├── api/                   # External API integrations (e.g. Open Trivia DB)
+│   ├── api/                    # External data sources (e.g. Open Trivia DB)
 │   ├── commands/
-│   │   ├── admin/             # /admin — ban, unban, reset, addquestion, announce
-│   │   ├── social/            # /leaderboard, /profile, /achievements
-│   │   ├── stats/             # /stats — player statistics
-│   │   ├── trivia/            # /trivia — play, duel, tournament
-│   │   └── utility/           # Utility slash commands
-│   ├── config/                # Category and difficulty configuration
-│   ├── core/                  # Bot client initialization
-│   ├── db/                    # Database access layer
-│   │   ├── index.js           # DB connection + migration runner
-│   │   ├── migrations.js      # All schema migrations
-│   │   ├── players.js         # Player CRUD
-│   │   ├── questions.js       # Question queries
-│   │   ├── achievements.js    # Achievement logic
-│   │   └── history.js         # Game history queries
-│   ├── embeds/                # Discord embed builders
-│   ├── events/                # Discord event handlers
-│   ├── game/                  # Core game engine
-│   ├── scheduler/             # node-cron scheduled tasks (daily challenges)
-│   └── utils/                 # Shared helpers
-├── .env                       # Environment variables (not committed)
-├── package.json
-└── README.md
+│   │   ├── admin/              # /admin — moderation and server management
+│   │   ├── social/             # /leaderboard, /profile, /achievements
+│   │   ├── stats/              # /stats — personal statistics
+│   │   ├── trivia/             # /trivia — play, duel, tournament
+│   │   └── utility/            # Miscellaneous utility commands
+│   ├── config/
+│   │   ├── categories.js       # Question category definitions
+│   │   └── difficulties.js     # Difficulty level configuration
+│   ├── core/
+│   │   └── client.js           # Bot entrypoint — creates and starts the client
+│   ├── db/
+│   │   ├── index.js            # Opens the database and runs migrations
+│   │   ├── migrations.js       # Versioned schema migrations
+│   │   ├── players.js          # Player read/write helpers
+│   │   ├── questions.js        # Question query helpers
+│   │   ├── achievements.js     # Achievement unlock logic
+│   │   └── history.js          # Game history queries
+│   ├── embeds/                 # discord.js EmbedBuilder factories
+│   ├── events/                 # Discord gateway event handlers
+│   ├── game/
+│   │   └── engine.js           # Core game loop — question delivery, scoring, timers
+│   ├── scheduler/              # node-cron jobs (daily challenge reset, etc.)
+│   └── utils/                  # Shared utility functions
+│
+├── .env                        # Secret config — never commit this
+├── .env.example                # Template for required environment variables
+├── .gitignore
+└── package.json
 ```
 
 ---
 
-## 🗄️ Database Schema
+## Configuration
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Database-SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite Database" />
-</p>
-
-All data is stored in a local SQLite file at `data/trivia.db`, managed via `better-sqlite3`. Migrations run automatically on startup.
-
-### `players`
-Stores every user who has interacted with the bot.
-
-| Column | Type | Description |
-|---|---|---|
-| `user_id` | TEXT PK | Discord user ID |
-| `username` | TEXT | Display name |
-| `score` | INTEGER | Total score |
-| `xp` | INTEGER | Experience points |
-| `level` | INTEGER | Current level |
-| `streak` | INTEGER | Current answer streak |
-| `best_streak` | INTEGER | All-time best streak |
-| `games_played` | INTEGER | Total games played |
-| `correct` / `wrong` | INTEGER | Answer counts |
-| `daily_streak` | INTEGER | Daily challenge streak |
-| `banned` | INTEGER | 0 = active, 1 = banned |
-| `ban_reason` | TEXT | Reason for ban |
-
-### `game_history`
-One row per game session.
-
-| Column | Type | Description |
-|---|---|---|
-| `user_id` | TEXT | Player reference |
-| `category` | TEXT | Question category |
-| `difficulty` | TEXT | easy / medium / hard |
-| `correct` | INTEGER | Questions answered correctly |
-| `score_delta` | INTEGER | Score change this session |
-| `streak_at_time` | INTEGER | Streak at time of play |
-| `time_taken` | INTEGER | Milliseconds to answer |
-
-### `custom_questions`
-Per-guild custom question pool.
-
-| Column | Type | Description |
-|---|---|---|
-| `guild_id` | TEXT | Discord server ID |
-| `question` | TEXT | Question text |
-| `correct` | TEXT | Correct answer |
-| `wrong1–3` | TEXT | Three incorrect options |
-| `category` | TEXT | Category label |
-| `difficulty` | TEXT | easy / medium / hard |
-| `added_by` | TEXT | Discord user ID of creator |
-
-### Other Tables
-- **`achievements_unlocked`** — tracks which achievements each user has earned
-- **`daily_entries`** — one row per user per date for daily challenge tracking
-- **`duels`** — records of duel results (challenger, opponent, winner, rounds)
-- **`bans`** — ban log with reason, banned_by, and timestamp
-- **`migrations`** — internal table tracking applied schema migrations
-
----
-
-## 💬 Commands
-
-### `/trivia`
-| Subcommand | Options | Description |
-|---|---|---|
-| `play` | `category`, `difficulty`, `time` | Start a solo trivia game |
-| `duel` | `user`, `rounds`, `difficulty` | Challenge a user to a duel |
-| `tournament` | — | Start or join a tournament |
-
-### `/admin` *(Administrator only)*
-| Subcommand | Options | Description |
-|---|---|---|
-| `ban` | `user`, `reason` | Ban a player |
-| `unban` | `user` | Unban a player |
-| `reset` | `user` | Reset a player's stats to zero |
-| `addquestion` | `question`, `correct`, `wrong1–3`, `category`, `difficulty` | Add a custom question |
-| `removequestion` | `id` | Remove a custom question by ID |
-| `listquestions` | — | List all custom questions for this server |
-| `announce` | `message`, `channel` | Send a bot announcement |
-
-### Social & Stats
-| Command | Description |
-|---|---|
-| `/leaderboard` | View the server's top players |
-| `/profile` | View your player profile (level, XP, stats) |
-| `/achievements` | View earned and available achievements |
-| `/stats` | Detailed personal statistics |
-
----
-
-## 🚀 Setup & Installation
-
-### Prerequisites
-- **Node.js v18+**
-- A Discord bot application with a valid token ([Discord Developer Portal](https://discord.com/developers/applications))
-
-### Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/trivia-bot.git
-   cd trivia-bot
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your bot token, client ID, and guild ID
-   ```
-
-4. **Seed the database** *(optional — loads starter questions)*
-   ```bash
-   npm run seed
-   ```
-
-5. **Register slash commands with Discord**
-   ```bash
-   npm run deploy
-   ```
-
-6. **Start the bot**
-   ```bash
-   npm start
-   ```
-
----
-
-## 🔐 Environment Variables
-
-Create a `.env` file in the project root based on `.env.example`:
+Copy `.env.example` to `.env` and fill in the values below.
 
 ```env
-DISCORD_TOKEN=your_bot_token_here
-CLIENT_ID=your_application_client_id
-GUILD_ID=your_test_guild_id   # For development/local command deployment
+# Required
+DISCORD_TOKEN=          # Bot token from the Discord Developer Portal
+CLIENT_ID=              # Application (client) ID
+GUILD_ID=               # Guild ID for development command deployment
 ```
 
+> **Tip:** For production, deploy commands globally by removing `GUILD_ID` from the deploy script. Global propagation can take up to an hour; guild-scoped deployment is instant and recommended during development.
+
 ---
 
-## 🛠️ Scripts
+## Slash Commands
 
-| Script | Command | Description |
+### `/trivia` — Game Commands
+
+| Subcommand | Options | Description |
 |---|---|---|
-| Start bot | `npm start` | Runs `src/core/client.js` |
-| Deploy commands | `npm run deploy` | Registers slash commands via Discord REST API |
-| Seed database | `npm run seed` | Populates the DB with starter trivia questions |
-| Wipe database | `npm run wipe` | Deletes all data (use with caution!) |
+| `play` | `category?` `difficulty?` `time?` | Start a solo trivia session |
+| `duel` | `user` `rounds?` `difficulty?` | Challenge another member to a duel |
+| `tournament` | — | Create or join a tournament lobby |
+
+### `/admin` — Server Management *(requires Administrator)*
+
+| Subcommand | Options | Description |
+|---|---|---|
+| `ban` | `user` `reason?` | Prevent a player from using the bot |
+| `unban` | `user` | Restore a banned player's access |
+| `reset` | `user` | Zero out a player's score, XP, and stats |
+| `addquestion` | `question` `correct` `wrong1–3` `category` `difficulty` | Add a custom question to this server's pool |
+| `removequestion` | `id` | Delete a custom question by its ID |
+| `listquestions` | — | List all custom questions for this server |
+| `announce` | `message` `channel?` | Broadcast a message via the bot |
+
+### `/profile` `/leaderboard` `/achievements` `/stats`
+
+| Command | Description |
+|---|---|
+| `/profile` | Your level, XP, score, streaks, and accuracy |
+| `/leaderboard` | Top players in this server ranked by score |
+| `/achievements` | Earned and available achievement badges |
+| `/stats` | Detailed breakdown of your game history |
 
 ---
 
-## 📄 License
+## Database Schema
 
-MIT — see [LICENSE](LICENSE) for details.
+<p align="center">
+  <img src="https://img.shields.io/badge/Storage-SQLite%20%28better--sqlite3%29-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
+</p>
+
+All data lives in `data/trivia.db`. Schema migrations are versioned in `src/db/migrations.js` and applied automatically at startup — no manual setup required.
+
+### `players`
+
+| Column | Type | Notes |
+|---|---|---|
+| `user_id` | `TEXT` · PK | Discord snowflake |
+| `username` | `TEXT` | Display name at time of last interaction |
+| `score` | `INTEGER` | Cumulative score across all games |
+| `xp` | `INTEGER` | Experience points (used to calculate `level`) |
+| `level` | `INTEGER` | Derived from XP thresholds |
+| `streak` | `INTEGER` | Current consecutive correct answers |
+| `best_streak` | `INTEGER` | All-time personal best streak |
+| `games_played` | `INTEGER` | Total sessions started |
+| `correct` / `wrong` | `INTEGER` | Lifetime answer counts |
+| `daily_streak` | `INTEGER` | Consecutive days with a completed daily challenge |
+| `last_daily` | `TEXT` | ISO date of last daily completion |
+| `banned` | `INTEGER` | `1` = banned, `0` = active |
+| `ban_reason` | `TEXT` | Human-readable ban reason |
+| `created_at` | `TEXT` | ISO timestamp of first interaction |
+
+### `game_history`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `INTEGER` · PK | Auto-increment |
+| `user_id` | `TEXT` | References `players.user_id` |
+| `category` | `TEXT` | Category name |
+| `difficulty` | `TEXT` | `easy` / `medium` / `hard` |
+| `correct` | `INTEGER` | Correct answers in this session |
+| `score_delta` | `INTEGER` | Score change applied after this session |
+| `streak_at_time` | `INTEGER` | Player's streak at the moment of play |
+| `time_taken` | `INTEGER` | Total milliseconds to complete the session |
+| `played_at` | `TEXT` | ISO timestamp |
+
+### `custom_questions`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `INTEGER` · PK | Auto-increment; used with `/admin removequestion` |
+| `guild_id` | `TEXT` | Scoped per Discord server |
+| `question` | `TEXT` | Question text |
+| `correct` | `TEXT` | Correct answer |
+| `wrong1` `wrong2` `wrong3` | `TEXT` | Distractor answers |
+| `category` | `TEXT` | Category label shown in-game |
+| `difficulty` | `TEXT` | `easy` / `medium` / `hard` |
+| `added_by` | `TEXT` | Discord user ID of the admin who added it |
+| `created_at` | `TEXT` | ISO timestamp |
+
+### Additional Tables
+
+| Table | Purpose |
+|---|---|
+| `achievements_unlocked` | Tracks `(user_id, achievement_id)` pairs with unlock timestamp |
+| `daily_entries` | One row per `(user_id, date)` for daily challenge deduplication |
+| `duels` | Records challenger, opponent, winner, round count, and timestamp |
+| `bans` | Audit log of all bans with reason, issuer, and timestamp |
+| `migrations` | Internal table — tracks which migrations have been applied |
 
 ---
 
-<p align="center">Made with ☕ and too many trivia questions.</p>
+## Scripts
+
+| Command | Description |
+|---|---|
+| `npm start` | Start the bot (`src/core/client.js`) |
+| `npm run deploy` | Register or update slash commands with Discord |
+| `npm run seed` | Populate `trivia.db` with starter questions from `custom-questions.json` |
+| `npm run wipe` | **Destructive.** Drop all data — use only in development |
+
+---
+
+## Bot Permissions
+
+When adding the bot to a server, the OAuth2 invite URL should request the following permissions:
+
+| Permission | Required for |
+|---|---|
+| `Send Messages` | All responses |
+| `Embed Links` | Rich embed replies |
+| `Read Message History` | Interaction context |
+| `Use Application Commands` | Slash commands |
+| `Manage Messages` | Cleaning up timed-out game prompts *(optional)* |
+
+Minimum required scope: `bot` + `applications.commands`.
+
+---
+
+## Contributing
+
+1. Fork the repository and create a feature branch: `git checkout -b feat/your-feature`
+2. Keep commits focused and write clear messages.
+3. Run `npm run deploy` against a test guild before submitting.
+4. Open a pull request with a description of what changed and why.
+
+Bug reports and feature requests are welcome via [GitHub Issues](../../issues).
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE) for the full text.
+
+---
+
+<p align="center">
+  <sub>Built with discord.js · Powered by better-sqlite3 · Questions sourced from <a href="https://opentdb.com">Open Trivia DB</a></sub>
+</p>
