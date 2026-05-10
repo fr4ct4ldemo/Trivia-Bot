@@ -6,6 +6,7 @@ import { timerBar } from '../utils/format.js'
 
 export const buildQuestion = (data) => {
   const difficultyColors = { easy: colors.correct, medium: colors.gold, hard: colors.wrong }
+  const difficultyStars = { easy: '⭐', medium: '⭐⭐', hard: '⭐⭐⭐' }
 
   const choiceLines = data.choices.map((choice, i) =>
     `\`${String.fromCharCode(65 + i)}\`  ${choice}`
