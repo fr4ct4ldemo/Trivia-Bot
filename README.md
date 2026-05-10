@@ -49,8 +49,8 @@ Need Node.js 18+ and a Discord bot token from the developer portal.
 
 ```bash
 # Clone and install
-git clone https://github.com/your-username/mr-obvious-bot.git
-cd mr-obvious-bot
+git clone https://github.com/your-username/Trivia-Bot.git
+cd Trivia-Bot
 npm install
 
 # Set up config
