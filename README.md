@@ -9,9 +9,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-f0c040?style=flat-square" alt="MIT License" /></a>
 </p>
 
-<p align="center">
-  A self-hosted Discord trivia bot with solo games, duels, tournaments, leaderboards, achievements, daily challenges, and a full admin toolset — powered by <strong>discord.js v14</strong> slash commands and a local <strong>SQLite</strong> database.
-</p>
+Trivia bot for Discord. Uses slash commands, runs on SQLite, and you host it yourself.
 
 ---
 
@@ -32,46 +30,44 @@
 
 ## Features
 
-| | Feature | Description |
-|---|---|---|
-| 🎮 | **Solo Play** | Answer questions across categories with configurable difficulty and time limit |
-| ⚔️ | **Duels** | Head-to-head multi-round matches against another server member |
-| 🏆 | **Tournaments** | Bracket-style competitions open to multiple players |
-| 📊 | **Leaderboard** | Server-wide score rankings updated in real time |
-| 🎖️ | **Achievements** | Milestone badges unlocked automatically based on play history |
-| 📅 | **Daily Challenges** | One challenge per day with persistent streak tracking |
-| 👤 | **Player Profiles** | Per-user stats: score, XP, level, streaks, accuracy |
-| 🗃️ | **Custom Questions** | Admins can add, list, and remove guild-specific questions |
-| 🛡️ | **Admin Panel** | Ban/unban players, reset stats, and send announcements |
-| 📈 | **Game History** | Every session logged to SQLite for stats and replay analysis |
+- Solo games with category and difficulty options
+- Head-to-head duels against other players
+- Tournaments for multiple participants
+- Real-time leaderboards
+- Achievement system for milestones
+- Daily challenges with streak tracking
+- Player profiles showing stats and progress
+- Custom questions that admins can add per server
+- Admin tools for banning, resetting stats, and announcements
+- Full game history logging
 
 ---
 
 ## Quick Start
 
-> **Prerequisites:** Node.js 18+, a Discord application with bot token ([create one here](https://discord.com/developers/applications))
+Need Node.js 18+ and a Discord bot token from the developer portal.
 
 ```bash
-# 1. Clone and install
+# Clone and install
 git clone https://github.com/your-username/mr-obvious-bot.git
 cd mr-obvious-bot
 npm install
 
-# 2. Configure
+# Set up config
 cp .env.example .env
-#    → fill in DISCORD_TOKEN, CLIENT_ID, GUILD_ID
+# Edit .env with your DISCORD_TOKEN, CLIENT_ID, GUILD_ID
 
-# 3. (Optional) Seed starter questions
+# Optional: Add some starter questions
 npm run seed
 
-# 4. Register slash commands
+# Register commands
 npm run deploy
 
-# 5. Start
+# Run it
 npm start
 ```
 
-The SQLite database at `data/trivia.db` is created and migrated automatically on first run.
+Database gets created automatically in `data/trivia.db`.
 
 ---
 
@@ -125,7 +121,7 @@ mr-obvious-bot/
 
 ## Configuration
 
-Copy `.env.example` to `.env` and fill in the values below.
+Copy `.env.example` to `.env` and fill in these:
 
 ```env
 # Required
@@ -134,7 +130,7 @@ CLIENT_ID=              # Application (client) ID
 GUILD_ID=               # Guild ID for development command deployment
 ```
 
-> **Tip:** For production, deploy commands globally by removing `GUILD_ID` from the deploy script. Global propagation can take up to an hour; guild-scoped deployment is instant and recommended during development.
+For production, you can deploy commands globally by tweaking the deploy script. Guild deployment is faster for testing.
 
 ---
 
@@ -142,32 +138,26 @@ GUILD_ID=               # Guild ID for development command deployment
 
 ### `/trivia` — Game Commands
 
-| Subcommand | Options | Description |
-|---|---|---|
-| `play` | `category?` `difficulty?` `time?` | Start a solo trivia session |
-| `duel` | `user` `rounds?` `difficulty?` | Challenge another member to a duel |
-| `tournament` | — | Create or join a tournament lobby |
+- `play` — Start a solo game, optional category/difficulty/time
+- `duel` — Challenge someone to a head-to-head match
+- `tournament` — Join or create a tournament
 
 ### `/admin` — Server Management *(requires Administrator)*
 
-| Subcommand | Options | Description |
-|---|---|---|
-| `ban` | `user` `reason?` | Prevent a player from using the bot |
-| `unban` | `user` | Restore a banned player's access |
-| `reset` | `user` | Zero out a player's score, XP, and stats |
-| `addquestion` | `question` `correct` `wrong1–3` `category` `difficulty` | Add a custom question to this server's pool |
-| `removequestion` | `id` | Delete a custom question by its ID |
-| `listquestions` | — | List all custom questions for this server |
-| `announce` | `message` `channel?` | Broadcast a message via the bot |
+- `ban` — Block a user from using the bot
+- `unban` — Restore access
+- `reset` — Wipe a player's stats
+- `addquestion` — Add a custom question
+- `removequestion` — Delete a custom question by ID
+- `listquestions` — Show all custom questions
+- `announce` — Send a message through the bot
 
-### `/profile` `/leaderboard` `/achievements` `/stats`
+### Other Commands
 
-| Command | Description |
-|---|---|
-| `/profile` | Your level, XP, score, streaks, and accuracy |
-| `/leaderboard` | Top players in this server ranked by score |
-| `/achievements` | Earned and available achievement badges |
-| `/stats` | Detailed breakdown of your game history |
+- `/profile` — Your stats, level, streaks
+- `/leaderboard` — Server rankings
+- `/achievements` — Unlocked badges
+- `/stats` — Detailed game history
 
 ---
 
@@ -177,7 +167,7 @@ GUILD_ID=               # Guild ID for development command deployment
   <img src="https://img.shields.io/badge/Storage-SQLite%20%28better--sqlite3%29-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
 </p>
 
-All data lives in `data/trivia.db`. Schema migrations are versioned in `src/db/migrations.js` and applied automatically at startup — no manual setup required.
+Everything's in `data/trivia.db`. Migrations run automatically from `src/db/migrations.js`.
 
 ### `players`
 
@@ -267,12 +257,7 @@ Minimum required scope: `bot` + `applications.commands`.
 
 ## Contributing
 
-1. Fork the repository and create a feature branch: `git checkout -b feat/your-feature`
-2. Keep commits focused and write clear messages.
-3. Run `npm run deploy` against a test guild before submitting.
-4. Open a pull request with a description of what changed and why.
-
-Bug reports and feature requests are welcome via [GitHub Issues](../../issues).
+Fork it, make a branch, keep commits small. Test commands on a dev guild before PRing. Issues are fine for bugs or ideas.
 
 ---
 
