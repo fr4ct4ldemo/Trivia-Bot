@@ -81,6 +81,34 @@ const migrations = [
       banned_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
   `),
+  // Migration to add guild_id support for per-guild ban isolation
+  (db) => {
+    try {
+      db.exec(`ALTER TABLE bans ADD COLUMN guild_id TEXT DEFAULT NULL`)
+    } catch (error) {
+      // Column already exists, skip silently
+      if (!error.message.includes('duplicate column')) throw error
+    }
+  },
+  // Migration to add guild_id support for per-guild duel isolation
+  (db) => {
+    try {
+      db.exec(`ALTER TABLE duels ADD COLUMN guild_id TEXT DEFAULT NULL`)
+    } catch (error) {
+      // Column already exists, skip silently
+      if (!error.message.includes('duplicate column')) throw error
+    }
+  },
+  // Migration to add tournament_history table
+  (db) => db.exec(`
+    CREATE TABLE IF NOT EXISTS tournament_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      guild_id TEXT,
+      winner_id TEXT,
+      player_count INTEGER,
+      played_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `),
 ]
 
 export const runMigrations = (db) => {
