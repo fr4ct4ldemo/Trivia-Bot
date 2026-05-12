@@ -44,3 +44,74 @@ export const buildTournamentWinner = (player) => {
     ].join('\n'))
     .setTimestamp()
 }
+
+/**
+ * Build tournament lobby embed
+ * @param {object} data - Lobby data
+ * @returns {EmbedBuilder}
+ */
+export const buildLobbyEmbed = ({ host, players, maxPlayers, status = 'waiting' }) => {
+  const playerList = players.map(p => `<@${p.userId}> — **${p.username}**`).join('\n')
+
+  const statusText = status === 'started'
+    ? '🎮 Tournament Started'
+    : status === 'cancelled'
+      ? '❌ Tournament Cancelled'
+      : '⏳ Waiting for Players'
+
+  const embed = new EmbedBuilder()
+    .setColor(colors.tournament)
+    .setTitle('🏆 Tournament Lobby')
+    .setDescription(`**Status:** ${statusText}`)
+    .addFields(
+      {
+        name: '👑 Host',
+        value: `<@${host}>`,
+        inline: false,
+      },
+      {
+        name: `👥 Players (${players.length}/${maxPlayers})`,
+        value: playerList || '`No players yet`',
+        inline: false,
+      }
+    )
+    .setFooter({ text: status === 'waiting' ? 'Tournament starts when host clicks button' : 'Tournament in progress' })
+    .setTimestamp()
+
+  return embed
+}
+
+/**
+ * Build tournament results embed
+ * @param {object} data - Results data
+ * @returns {EmbedBuilder}
+ */
+export const buildTournamentResultsEmbed = ({ rankedPlayers }) => {
+  const medals = ['🥇', '🥈', '🥉']
+  const resultLines = rankedPlayers.map((player, i) => {
+    const medal = medals[i] || '  '
+    const accuracy = Math.round((player.correct / 5) * 100)
+    return `${medal} **#${i + 1}** — <@${player.userId}> **${player.score}** pts (${player.correct}/5 correct — ${accuracy}%)`
+  }).join('\n')
+
+  const embed = new EmbedBuilder()
+    .setColor(colors.tournament)
+    .setTitle('🏆 Tournament Results')
+    .setDescription(resultLines)
+    .setFooter({ text: `${rankedPlayers.length} players competed` })
+    .setTimestamp()
+
+  return embed
+}
+
+/**
+ * Build tournament cancelled embed
+ * @returns {EmbedBuilder}
+ */
+export const buildTournamentCancelledEmbed = () => {
+  return new EmbedBuilder()
+    .setColor(colors.wrong)
+    .setTitle('❌ Tournament Cancelled')
+    .setDescription('The tournament was cancelled due to inactivity (5-minute timeout).')
+    .setTimestamp()
+}
